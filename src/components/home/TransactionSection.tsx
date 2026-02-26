@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { C } from "../../constants/colors";
 import type { SaleItem } from "../../services/sales";
 import type { Category, TransactionType } from "../../services/transactions";
 
@@ -154,12 +153,14 @@ export function TransactionSection({
               <Feather
                 name="trending-up"
                 size={14}
-                color={form.type === "income" ? C.bg : C.textMuted}
+                color={form.type === "income" ? "#FFFFFF" : "#0F5E3C"}
               />
               <Text
                 style={[
                   styles.typeBtnText,
-                  form.type === "income" && styles.typeBtnTextActive,
+                  form.type === "income"
+                    ? styles.typeBtnTextIncomeActive
+                    : styles.typeBtnTextIncome,
                 ]}
               >
                 Ingreso
@@ -169,6 +170,7 @@ export function TransactionSection({
           <TouchableOpacity
             style={[
               styles.typeBtn,
+              styles.typeBtnExpense,
               form.type === "expense" && styles.typeBtnExpenseActive,
             ]}
             onPress={() => {
@@ -181,12 +183,14 @@ export function TransactionSection({
               <Feather
                 name="trending-down"
                 size={14}
-                color={form.type === "expense" ? C.bg : C.textMuted}
+                color={form.type === "expense" ? "#FFFFFF" : "#B42318"}
               />
               <Text
                 style={[
                   styles.typeBtnText,
-                  form.type === "expense" && styles.typeBtnTextActive,
+                  form.type === "expense"
+                    ? styles.typeBtnTextExpenseActive
+                    : styles.typeBtnTextExpense,
                 ]}
               >
                 Gasto
@@ -201,7 +205,7 @@ export function TransactionSection({
           value={form.amount}
           onChangeText={(v) => onUpdateField("amount", v)}
           placeholder="0.00"
-          placeholderTextColor="#3a6b50"
+          placeholderTextColor="#98A2B3"
           keyboardType="decimal-pad"
         />
 
@@ -241,7 +245,7 @@ export function TransactionSection({
           value={form.description}
           onChangeText={(v) => onUpdateField("description", v)}
           placeholder="Ej: Venta del dia"
-          placeholderTextColor="#3a6b50"
+          placeholderTextColor="#98A2B3"
         />
 
         <Text style={styles.formLabel}>Fecha</Text>
@@ -250,7 +254,7 @@ export function TransactionSection({
           onPress={() => setShowDatePicker(true)}
           activeOpacity={0.8}
         >
-          <Feather name="calendar" size={14} color={C.textMuted} />
+          <Feather name="calendar" size={14} color="#0F5E3C" />
           <Text style={styles.dateSelectorText}>
             {formatDisplayDate(form.date)}
           </Text>
@@ -269,7 +273,7 @@ export function TransactionSection({
                 onUpdateField("date", `${y}-${m}-${d}`);
               }
             }}
-            themeVariant="dark"
+            themeVariant="light"
           />
         )}
 
@@ -283,10 +287,10 @@ export function TransactionSection({
           activeOpacity={0.8}
         >
           {saving ? (
-            <ActivityIndicator size="small" color={C.bg} />
+            <ActivityIndicator size="small" color="#FFFFFF" />
           ) : (
             <View style={styles.typeBtnContent}>
-              <Feather name="save" size={14} color={C.bg} />
+              <Feather name="save" size={14} color="#FFFFFF" />
               <Text style={styles.btnSaveText}>Guardar transaccion</Text>
             </View>
           )}
@@ -294,8 +298,8 @@ export function TransactionSection({
       </View>
 
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionSubtitle}>Últimos 10 movimientos</Text>
-        {loadingData && <ActivityIndicator size="small" color={C.emerald} />}
+        <Text style={styles.sectionSubtitle}>Ultimos 10 movimientos</Text>
+        {loadingData && <ActivityIndicator size="small" color="#0F5E3C" />}
       </View>
 
       {!loadingData && transactions.length === 0 ? (
@@ -311,7 +315,7 @@ export function TransactionSection({
               onPress={() => setShowAllModal(true)}
               activeOpacity={0.8}
             >
-              <Feather name="list" size={14} color={C.emerald} />
+              <Feather name="list" size={14} color="#0F5E3C" />
               <Text style={styles.btnViewAllText}>
                 Ver todas ({transactions.length})
               </Text>
@@ -326,7 +330,7 @@ export function TransactionSection({
           onPress={onViewHistory}
           activeOpacity={0.8}
         >
-          <Feather name="clock" size={14} color={C.textMuted} />
+          <Feather name="clock" size={14} color="#FFFFFF" />
           <Text style={styles.btnHistoryText}>Ver historial completo</Text>
         </TouchableOpacity>
       )}
@@ -344,7 +348,7 @@ export function TransactionSection({
               activeOpacity={0.7}
               style={styles.modalCloseBtn}
             >
-              <Feather name="x" size={22} color={C.text} />
+              <Feather name="x" size={22} color="#111111" />
             </TouchableOpacity>
           </View>
           <Text style={styles.modalCount}>
@@ -365,60 +369,61 @@ export function TransactionSection({
 
 const styles = StyleSheet.create({
   formCard: {
-    backgroundColor: C.card,
-    borderRadius: 14,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: C.border,
-    padding: 16,
+    borderColor: "#E6E9EF",
+    padding: 18,
     marginBottom: 18,
-    shadowColor: C.gold,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    elevation: 6,
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   sectionSubtitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    letterSpacing: 1,
-    textTransform: "uppercase",
-    color: C.textMuted,
+    fontSize: 19,
+    fontWeight: "700",
+    color: "#111111",
     marginBottom: 14,
-    marginTop: 8,
+    marginTop: 2,
   },
   formLabel: {
-    color: C.textMuted,
-    fontSize: 11,
+    color: "#0F5E3C",
+    fontWeight: "600",
+    fontSize: 12,
     letterSpacing: 1,
     textTransform: "uppercase",
     marginBottom: 6,
     marginTop: 12,
   },
   formInput: {
-    backgroundColor: C.inputBg,
+    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: C.border,
+    borderColor: "#E6E9EF",
     borderRadius: 10,
-    padding: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     fontSize: 15,
-    color: C.text,
+    color: "#111111",
   },
   dateSelector: {
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
-    backgroundColor: C.inputBg,
+    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: C.border,
+    borderColor: "#E6E9EF",
     borderRadius: 10,
-    padding: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
   },
   dateSelectorText: {
-    color: C.text,
+    color: "#111111",
     fontSize: 15,
   },
   formHint: {
-    color: "#3a6b50",
+    color: "#667085",
     fontSize: 13,
     fontStyle: "italic",
     paddingVertical: 8,
@@ -429,20 +434,24 @@ const styles = StyleSheet.create({
   },
   typeBtn: {
     flex: 1,
-    borderRadius: 10,
-    paddingVertical: 10,
+    borderRadius: 12,
+    paddingVertical: 8,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: C.border,
-    backgroundColor: C.inputBg,
+    borderColor: "#E6E9EF",
+    backgroundColor: "#FFFFFF",
   },
   typeBtnIncomeActive: {
-    backgroundColor: C.emerald,
-    borderColor: C.emerald,
+    backgroundColor: "#0F5E3C",
+    borderColor: "#0F5E3C",
+  },
+  typeBtnExpense: {
+    backgroundColor: "#FFFFFF",
+    borderColor: "#B42318",
   },
   typeBtnExpenseActive: {
-    backgroundColor: C.danger,
-    borderColor: C.danger,
+    backgroundColor: "#B42318",
+    borderColor: "#B42318",
   },
   typeBtnContent: {
     flexDirection: "row",
@@ -450,12 +459,20 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   typeBtnText: {
-    color: C.textMuted,
     fontSize: 14,
     fontWeight: "600",
   },
-  typeBtnTextActive: {
-    color: C.bg,
+  typeBtnTextIncome: {
+    color: "#0F5E3C",
+  },
+  typeBtnTextIncomeActive: {
+    color: "#FFFFFF",
+  },
+  typeBtnTextExpense: {
+    color: "#B42318",
+  },
+  typeBtnTextExpenseActive: {
+    color: "#FFFFFF",
   },
   catRow: {
     flexDirection: "row",
@@ -468,42 +485,39 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderWidth: 1,
-    borderColor: C.border,
-    backgroundColor: C.inputBg,
+    borderColor: "#0F5E3C",
+    backgroundColor: "#FFFFFF",
   },
   catChipActive: {
-    backgroundColor: C.emerald,
-    borderColor: C.emerald,
+    backgroundColor: "#0F5E3C",
+    borderColor: "#0F5E3C",
   },
   catChipText: {
-    color: C.textMuted,
+    color: "#0F5E3C",
     fontSize: 12,
     fontWeight: "600",
   },
   catChipTextActive: {
-    color: C.bg,
+    color: "#FFFFFF",
   },
   btnSave: {
-    backgroundColor: C.gold,
+    backgroundColor: "#111111",
     borderRadius: 12,
-    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: "#111111",
+    height: 44,
     alignItems: "center",
+    justifyContent: "center",
     marginTop: 16,
-    shadowColor: C.gold,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 6,
   },
   btnSaveDisabled: {
-    backgroundColor: "#134e2a",
-    shadowOpacity: 0,
+    backgroundColor: "#D0D5DD",
+    borderColor: "#D0D5DD",
   },
   btnSaveText: {
-    color: "#0a1a12",
-    fontSize: 15,
+    color: "#FFFFFF",
+    fontSize: 14,
     fontWeight: "700",
-    letterSpacing: 0.5,
   },
   sectionHeader: {
     flexDirection: "row",
@@ -512,16 +526,21 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   emptyBox: {
+    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: C.border,
-    borderStyle: "dashed",
-    borderRadius: 12,
+    borderColor: "#E6E9EF",
+    borderRadius: 16,
     paddingVertical: 30,
     alignItems: "center",
     marginBottom: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   emptyText: {
-    color: C.textMuted,
+    color: "#667085",
     fontSize: 14,
   },
   btnViewAll: {
@@ -530,13 +549,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 8,
     borderWidth: 1,
-    borderColor: C.emerald,
-    borderRadius: 10,
-    paddingVertical: 10,
+    borderColor: "#0F5E3C",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    height: 44,
     marginBottom: 12,
   },
   btnViewAllText: {
-    color: C.emerald,
+    color: "#0F5E3C",
     fontSize: 13,
     fontWeight: "600",
   },
@@ -546,19 +566,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 8,
     borderWidth: 1,
-    borderColor: C.border,
-    borderRadius: 10,
-    paddingVertical: 10,
+    borderColor: "#111111",
+    backgroundColor: "#111111",
+    borderRadius: 12,
+    height: 46,
     marginBottom: 8,
   },
   btnHistoryText: {
-    color: C.textMuted,
+    color: "#FFFFFF",
     fontSize: 13,
     fontWeight: "600",
   },
   modalFull: {
     flex: 1,
-    backgroundColor: C.bg,
+    backgroundColor: "#F7F9FB",
   },
   modalHeader: {
     flexDirection: "row",
@@ -568,10 +589,10 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: C.border,
+    borderBottomColor: "#E6E9EF",
   },
   modalTitle: {
-    color: C.text,
+    color: "#111111",
     fontSize: 18,
     fontWeight: "700",
   },
@@ -579,7 +600,8 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   modalCount: {
-    color: C.textMuted,
+    color: "#0F5E3C",
+    fontWeight: "600",
     fontSize: 12,
     paddingHorizontal: 20,
     paddingTop: 8,
@@ -593,24 +615,29 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   txCard: {
-    backgroundColor: C.card,
-    borderRadius: 12,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: C.border,
+    borderColor: "#E6E9EF",
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
     overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   txAccent: {
     width: 4,
     alignSelf: "stretch",
   },
   txAccentIncome: {
-    backgroundColor: C.emerald,
+    backgroundColor: "#0F5E3C",
   },
   txAccentExpense: {
-    backgroundColor: C.danger,
+    backgroundColor: "#B42318",
   },
   txBody: {
     flex: 1,
@@ -618,12 +645,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
   },
   txDescription: {
-    color: C.text,
+    color: "#111111",
     fontSize: 14,
     fontWeight: "600",
   },
   txDate: {
-    color: C.textMuted,
+    color: "#667085",
     fontSize: 11,
     marginTop: 2,
   },
@@ -631,7 +658,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   txItemText: {
-    color: C.textMuted,
+    color: "#667085",
     fontSize: 11,
     lineHeight: 16,
   },
@@ -641,9 +668,9 @@ const styles = StyleSheet.create({
     paddingRight: 14,
   },
   txAmountIncome: {
-    color: C.emeraldLight,
+    color: "#0F5E3C",
   },
   txAmountExpense: {
-    color: C.danger,
+    color: "#B42318",
   },
 });

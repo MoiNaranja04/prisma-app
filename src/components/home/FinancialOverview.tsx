@@ -1,6 +1,5 @@
 import { Feather } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { C } from "../../constants/colors";
 import type { FinancialSummary } from "../../services/transactions";
 
 type DateFilterKey = "today" | "week" | "month" | "all";
@@ -68,7 +67,7 @@ export function FinancialOverview({
               onPress={onExportPDF}
               activeOpacity={0.8}
             >
-              <Feather name="download" size={14} color={C.emerald} />
+              <Feather name="download" size={14} color="#FFFFFF" />
               <Text style={styles.btnExportText}>Exportar reporte</Text>
             </TouchableOpacity>
           )}
@@ -85,7 +84,7 @@ export function FinancialOverview({
                 <Feather
                   name="trending-up"
                   size={14}
-                  color={C.emeraldLight}
+                  color="#0F5E3C"
                   style={styles.summaryIcon}
                 />
                 <Text style={styles.summaryLabel}>Ingresos</Text>
@@ -97,7 +96,7 @@ export function FinancialOverview({
                 <Feather
                   name="trending-down"
                   size={14}
-                  color={C.danger}
+                  color="#B42318"
                   style={styles.summaryIcon}
                 />
                 <Text style={styles.summaryLabel}>Gastos</Text>
@@ -109,18 +108,11 @@ export function FinancialOverview({
                 <Feather
                   name="dollar-sign"
                   size={14}
-                  color={summary.balance >= 0 ? C.emeraldLight : C.danger}
+                  color="#0F5E3C"
                   style={styles.summaryIcon}
                 />
                 <Text style={styles.summaryLabel}>Balance</Text>
-                <Text
-                  style={[
-                    styles.summaryValue,
-                    summary.balance >= 0
-                      ? styles.summaryIncome
-                      : styles.summaryExpense,
-                  ]}
-                >
+                <Text style={[styles.summaryValue, styles.summaryBalance]}>
                   ${summary.balance.toFixed(2)}
                 </Text>
               </View>
@@ -135,7 +127,7 @@ export function FinancialOverview({
             <Feather
               name="shopping-bag"
               size={16}
-              color={C.gold}
+              color="#0F5E3C"
               style={styles.dashIcon}
             />
             <Text style={styles.dashValue}>{dashboard.totalSales}</Text>
@@ -145,7 +137,7 @@ export function FinancialOverview({
             <Feather
               name="package"
               size={16}
-              color={C.gold}
+              color="#0F5E3C"
               style={styles.dashIcon}
             />
             <Text style={styles.dashValue}>{dashboard.totalUnitsSold}</Text>
@@ -155,7 +147,7 @@ export function FinancialOverview({
             <Feather
               name="award"
               size={16}
-              color={C.gold}
+              color="#0F5E3C"
               style={styles.dashIcon}
             />
             <Text style={styles.dashBest} numberOfLines={2}>
@@ -172,10 +164,10 @@ export function FinancialOverview({
 const styles = StyleSheet.create({
   controlsRow: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "space-between",
     gap: 10,
-    marginBottom: 14,
+    marginBottom: 16,
   },
   filterRow: {
     flexDirection: "row",
@@ -188,57 +180,57 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: C.border,
-    backgroundColor: C.inputBg,
+    borderColor: "#0F5E3C",
+    backgroundColor: "#FFFFFF",
   },
   filterChipActive: {
-    backgroundColor: C.emerald,
-    borderColor: C.emerald,
+    backgroundColor: "#0F5E3C",
+    borderColor: "#0F5E3C",
   },
   filterChipText: {
-    color: C.textMuted,
+    color: "#0F5E3C",
     fontSize: 12,
     fontWeight: "600",
   },
   filterChipTextActive: {
-    color: C.bg,
+    color: "#FFFFFF",
   },
   btnExport: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: 8,
     borderWidth: 1,
-    borderColor: C.emerald,
-    borderRadius: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    borderColor: "#111111",
+    backgroundColor: "#111111",
+    borderRadius: 12,
+    height: 44,
+    paddingHorizontal: 14,
   },
   btnExportText: {
-    color: C.emerald,
+    color: "#FFFFFF",
     fontSize: 13,
     fontWeight: "600",
   },
   stateCard: {
-    backgroundColor: C.card,
-    borderRadius: 14,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: C.border,
+    borderColor: "#E6E9EF",
     padding: 18,
     marginBottom: 20,
-    shadowColor: C.gold,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 6,
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   sectionSubtitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    letterSpacing: 1,
-    textTransform: "uppercase",
-    color: C.textMuted,
+    fontSize: 19,
+    fontWeight: "700",
+    color: "#111111",
     marginBottom: 14,
-    marginTop: 8,
+    marginTop: 2,
   },
   summaryRow: {
     flexDirection: "row",
@@ -250,30 +242,35 @@ const styles = StyleSheet.create({
   summaryItemCenter: {
     borderLeftWidth: 1,
     borderRightWidth: 1,
-    borderColor: C.border,
+    borderColor: "#E6E9EF",
   },
   summaryIcon: {
     marginBottom: 4,
   },
   summaryLabel: {
-    fontSize: 11,
-    color: C.textMuted,
+    fontSize: 12,
+    color: "#0F5E3C",
+    fontWeight: "600",
+    textTransform: "uppercase",
     marginBottom: 4,
-    letterSpacing: 0.5,
+    letterSpacing: 1,
   },
   summaryValue: {
     fontSize: 18,
     fontWeight: "800",
   },
   summaryIncome: {
-    color: C.emeraldLight,
+    color: "#0F5E3C",
   },
   summaryExpense: {
-    color: C.danger,
+    color: "#B42318",
+  },
+  summaryBalance: {
+    color: "#111111",
   },
   stateDivider: {
     height: 1,
-    backgroundColor: C.border,
+    backgroundColor: "#E6E9EF",
     marginVertical: 14,
   },
   dashRow: {
@@ -287,7 +284,7 @@ const styles = StyleSheet.create({
   dashItemCenter: {
     borderLeftWidth: 1,
     borderRightWidth: 1,
-    borderColor: C.border,
+    borderColor: "#E6E9EF",
   },
   dashIcon: {
     marginBottom: 4,
@@ -295,19 +292,21 @@ const styles = StyleSheet.create({
   dashValue: {
     fontSize: 22,
     fontWeight: "800",
-    color: C.gold,
+    color: "#111111",
   },
   dashBest: {
     fontSize: 13,
     fontWeight: "700",
-    color: C.gold,
+    color: "#111111",
     textAlign: "center",
   },
   dashLabel: {
-    fontSize: 11,
-    color: C.textMuted,
+    fontSize: 12,
+    color: "#0F5E3C",
+    fontWeight: "600",
+    textTransform: "uppercase",
     marginTop: 4,
-    letterSpacing: 0.5,
+    letterSpacing: 1,
     textAlign: "center",
   },
 });

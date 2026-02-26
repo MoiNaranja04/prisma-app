@@ -1,18 +1,20 @@
-import { Feather } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
-import { C } from "../../src/constants/colors";
+import { CustomTabBar } from "../../components/navigation/CustomTabBar";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
+  const tabBarOverlayHeight = 64 + Math.max(insets.bottom, 8);
+
   return (
     <Tabs
+      tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: C.emerald,
-        tabBarInactiveTintColor: C.textMuted,
-        tabBarStyle: {
-          backgroundColor: C.bg,
-          borderTopColor: C.border,
+        sceneStyle: {
+          backgroundColor: "#F7F9FB",
+          paddingBottom: tabBarOverlayHeight,
         },
       }}
     >
@@ -20,45 +22,30 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Inicio",
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="home" size={size} color={color} />
-          ),
         }}
       />
       <Tabs.Screen
         name="pos"
         options={{
           title: "Ventas",
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="shopping-cart" size={size} color={color} />
-          ),
         }}
       />
       <Tabs.Screen
         name="inventory"
         options={{
           title: "Inventario",
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="package" size={size} color={color} />
-          ),
         }}
       />
       <Tabs.Screen
         name="sales"
         options={{
           title: "Historial",
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="clock" size={size} color={color} />
-          ),
         }}
       />
       <Tabs.Screen
         name="customers"
         options={{
           title: "Clientes",
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="users" size={size} color={color} />
-          ),
         }}
       />
 

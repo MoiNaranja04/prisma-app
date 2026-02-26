@@ -1,4 +1,5 @@
 import { Feather } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
@@ -19,7 +20,6 @@ import {
   SkeletonSummaryCard,
   SkeletonTransactionCard,
 } from "../../src/components/ui/Skeleton";
-import { C } from "../../src/constants/colors";
 import { useToast } from "../../src/context/ToastContext";
 import { useCompany } from "../../src/hooks/useCompany";
 import {
@@ -152,6 +152,49 @@ export default function DashboardScreen() {
     companyIdRef.current = company.id;
     loadData(company.id);
   }, [company, loadData]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!company?.id) return;
+      loadData(company.id);
+    }, [company?.id, loadData]),
+  );
+
+  useEffect(() => {
+    if (!company?.id) return;
+    const companyId = company.id;
+    const channel = supabase
+      .channel(`dashboard-live-${companyId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "transactions",
+          filter: `company_id=eq.${companyId}`,
+        },
+        () => {
+          loadData(companyId);
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "sales",
+          filter: `company_id=eq.${companyId}`,
+        },
+        () => {
+          loadData(companyId);
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [company?.id, loadData]);
 
   const filteredTransactions = useMemo(() => {
     if (dateFilter === "all") return transactions;
@@ -347,7 +390,7 @@ export default function DashboardScreen() {
   if (loadingCompany) {
     return (
       <View style={[styles.root, styles.centered]}>
-        <ActivityIndicator size="large" color={C.emerald} />
+        <ActivityIndicator size="large" color="#0F5E3C" />
         <Text style={styles.loadingText}>Cargando empresa...</Text>
       </View>
     );
@@ -362,7 +405,7 @@ export default function DashboardScreen() {
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.tagline}>Control financiero inteligente</Text>
+          <Text style={styles.tagline}>Control financiero</Text>
         </View>
 
         {company && (
@@ -394,7 +437,7 @@ export default function DashboardScreen() {
                   <Feather
                     name={showInviteCode ? "eye-off" : "eye"}
                     size={16}
-                    color={C.gold}
+                    color="#0F5E3C"
                   />
                 </TouchableOpacity>
               </View>
@@ -445,7 +488,7 @@ export default function DashboardScreen() {
         )}
 
         <TouchableOpacity style={styles.btnLogout} onPress={handleLogout}>
-          <Feather name="log-out" size={14} color={C.textMuted} />
+          <Feather name="log-out" size={14} color="#B42318" />
           <Text style={styles.btnLogoutText}>Cerrar sesión</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -456,14 +499,14 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: C.bg,
+    backgroundColor: "#F7F9FB",
   },
   centered: {
     justifyContent: "center",
     alignItems: "center",
   },
   loadingText: {
-    color: C.textMuted,
+    color: "#667085",
     fontSize: 14,
     marginTop: 12,
   },
@@ -477,28 +520,28 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   logo: {
-    width: 130,
-    height: 50,
+    width: 200,
+    height: 78,
   },
   tagline: {
     fontSize: 12,
-    color: C.textMuted,
+    color: "#111111",
     marginTop: 4,
     letterSpacing: 0.5,
   },
   card: {
-    backgroundColor: C.card,
+    backgroundColor: "#FFFFFF",
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: C.border,
+    borderColor: "#E6E9EF",
     paddingVertical: 16,
     paddingHorizontal: 20,
     marginBottom: 20,
-    shadowColor: C.emerald,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 6,
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
     overflow: "hidden",
   },
   cardAccent: {
@@ -507,20 +550,21 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     width: 4,
-    backgroundColor: C.emerald,
+    backgroundColor: "#0F5E3C",
     borderTopLeftRadius: 16,
     borderBottomLeftRadius: 16,
   },
   cardLabel: {
-    fontSize: 10,
-    color: C.textMuted,
-    letterSpacing: 2,
+    fontSize: 12,
+    color: "#0F5E3C",
+    fontWeight: "600",
+    letterSpacing: 1,
     marginBottom: 4,
   },
   cardTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: C.text,
+    color: "#111111",
     marginBottom: 10,
   },
   cardRow: {
@@ -528,22 +572,24 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   chip: {
-    backgroundColor: "#134e2a",
+    backgroundColor: "#FFFFFF",
     borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#E6E9EF",
     paddingHorizontal: 12,
     paddingVertical: 4,
   },
   chipText: {
     fontSize: 12,
-    color: C.emeraldLight,
+    color: "#0F5E3C",
     fontWeight: "600",
     textTransform: "capitalize",
   },
   chipCyan: {
-    backgroundColor: "#0e3a42",
+    backgroundColor: "#FFFFFF",
   },
   chipTextCyan: {
-    color: C.cyan,
+    color: "#0F5E3C",
   },
   inviteCodeRow: {
     flexDirection: "row",
@@ -552,14 +598,16 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   inviteCodeLabel: {
-    color: C.textMuted,
-    fontSize: 10,
+    color: "#0F5E3C",
+    fontSize: 12,
+    fontWeight: "600",
     letterSpacing: 1,
+    textTransform: "uppercase",
   },
   inviteCodeValue: {
-    color: C.gold,
+    color: "#111111",
     fontSize: 14,
-    fontWeight: "900",
+    fontWeight: "800",
     letterSpacing: 3,
   },
   inviteEyeBtn: {
@@ -569,17 +617,18 @@ const styles = StyleSheet.create({
   btnLogout: {
     marginTop: 12,
     borderWidth: 1,
-    borderColor: C.border,
+    borderColor: "#FCA5A5",
+    backgroundColor: "#FEE4E2",
     borderRadius: 12,
-    paddingVertical: 10,
+    height: 44,
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "center",
     gap: 8,
   },
   btnLogoutText: {
-    color: C.textMuted,
+    color: "#B42318",
     fontSize: 13,
-    fontWeight: "500",
+    fontWeight: "600",
   },
 });
