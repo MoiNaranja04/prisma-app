@@ -1,10 +1,8 @@
 import React, { forwardRef, useState } from "react";
 import {
-  NativeSyntheticEvent,
   Platform,
   StyleProp,
   TextInput,
-  TextInputFocusEventData,
   TextInputProps,
   TextStyle,
 } from "react-native";
@@ -44,12 +42,12 @@ const ThemedTextInput = forwardRef<TextInput, ThemedTextInputProps>(
       ? (focusBorderColorDark ?? "#E8FFF4")
       : (focusBorderColorLight ?? colors.emerald);
 
-    const handleFocus = (event: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    const handleFocus: TextInputProps["onFocus"] = (event) => {
       setIsFocused(true);
       onFocus?.(event);
     };
 
-    const handleBlur = (event: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    const handleBlur: TextInputProps["onBlur"] = (event) => {
       setIsFocused(false);
       onBlur?.(event);
     };

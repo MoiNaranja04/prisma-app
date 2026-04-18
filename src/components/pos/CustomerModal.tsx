@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import { C } from "../../constants/colors";
-import type { Customer } from "../../services/customers";
+import type { Customer } from "../../lib/customers";
 import { FloatingModal } from "../ui/FloatingModal";
 import ThemedTextInput from "../ui/ThemedTextInput";
 

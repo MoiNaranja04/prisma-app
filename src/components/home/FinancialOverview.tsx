@@ -2,7 +2,7 @@ import { Feather } from "@expo/vector-icons";
 import { useEffect, useRef } from "react";
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
-import type { FinancialSummary } from "../../services/transactions";
+import type { FinancialSummary } from "../../lib/transactions";
 
 type DateFilterKey = "today" | "week" | "month" | "all";
 

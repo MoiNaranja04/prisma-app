@@ -13,8 +13,8 @@ import {
 import { FloatingModal } from "../ui/FloatingModal";
 import ThemedTextInput from "../ui/ThemedTextInput";
 import { useTheme } from "../../context/ThemeContext";
-import type { SaleItem } from "../../services/sales";
-import type { Category, TransactionType } from "../../services/transactions";
+import type { SaleItem } from "../../lib/sales";
+import type { Category, TransactionType } from "../../lib/transactions";
 
 interface TransactionForm {
   amount: string;

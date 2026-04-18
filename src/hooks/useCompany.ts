@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../services/supabase";
+import { supabase } from "../lib/supabase";
 import type { Company } from "../types/company";
 
 type Role = "admin" | "employee";

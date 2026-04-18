@@ -35,7 +35,7 @@ export function useHaptics() {
           await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
           break;
       }
-    } catch (error) {
+    } catch {
       // Silently fail if haptics not available
     }
   };

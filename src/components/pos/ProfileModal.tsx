@@ -11,7 +11,7 @@ import { FloatingModal } from "../ui/FloatingModal";
 import ThemedTextInput from "../ui/ThemedTextInput";
 import { C } from "../../constants/colors";
 import { useToast } from "../../context/ToastContext";
-import { supabase } from "../../services/supabase";
+import { supabase } from "../../lib/supabase";
 
 interface Props {
     visible: boolean;

@@ -7,8 +7,8 @@ import {
   View,
 } from "react-native";
 import { C } from "../../constants/colors";
-import type { Customer } from "../../services/customers";
-import type { Product } from "../../services/products";
+import type { Customer } from "../../lib/customers";
+import type { Product } from "../../lib/products";
 import { CustomerModal } from "../pos/CustomerModal";
 
 interface CartItemUI {

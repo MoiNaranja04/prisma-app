@@ -7,82 +7,102 @@ import type { Session } from "@supabase/supabase-js";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { CartProvider } from "../src/context/CartContext";
-import { ThemeProvider } from "../src/context/ThemeContext";
-import { ToastProvider } from "../src/context/ToastContext";
-import { supabase } from "../src/services/supabase";
+import { CartProvider } from "@/src/context/CartContext";
+import { ThemeProvider } from "@/src/context/ThemeContext";
+import { ToastProvider } from "@/src/context/ToastContext";
+import { supabase } from "@/src/lib/supabase";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const router = useRouter();
   const segments = useSegments();
-
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 🔹 Cargar sesión inicial
   useEffect(() => {
+    let active = true;
+
     const loadSession = async () => {
       const { data } = await supabase.auth.getSession();
-      setSession(data.session);
-      setIsLoading(false);
+      if (active) {
+        setSession(data.session);
+        setIsLoading(false);
+      }
     };
 
-    loadSession();
+    void loadSession();
 
     const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
+      (_event, nextSession) => {
+        if (active) {
+          setSession(nextSession);
+        }
       },
     );
 
     return () => {
+      active = false;
       listener.subscription.unsubscribe();
     };
   }, []);
 
-  // 🔹 Redirección automática
   useEffect(() => {
     if (isLoading) return;
 
-    const currentRoute = segments[0];
-    const inAuthGroup =
-      currentRoute === "login" ||
-      currentRoute === "register" ||
-      currentRoute === "join";
+    const rootSegment = segments[0];
+    const inAuthGroup = rootSegment === "(auth)";
+    const inProtectedArea =
+      rootSegment === "(admin)" ||
+      rootSegment === "(empleado)" ||
+      rootSegment === "security" ||
+      rootSegment === "modal";
 
-    if (!session && !inAuthGroup) {
+    if (!session && inProtectedArea) {
       router.replace("/login");
+      return;
     }
 
     if (session && inAuthGroup) {
       router.replace("/");
     }
-  }, [session, segments, isLoading, router]);
+  }, [isLoading, router, segments, session]);
 
   return (
     <NavThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <ThemeProvider>
         <ToastProvider>
           <CartProvider>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="login" />
-              <Stack.Screen name="register" />
-              <Stack.Screen name="join" />
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="modal" />
-              <Stack.Screen name="reports" />
-              <Stack.Screen name="employees" />
-              <Stack.Screen name="company" />
-              <Stack.Screen name="security" />
-            </Stack>
+            {isLoading ? (
+              <View style={styles.loader}>
+                <ActivityIndicator size="large" color="#0F5E3C" />
+              </View>
+            ) : (
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="index" />
+                <Stack.Screen name="(auth)" />
+                <Stack.Screen name="(admin)" />
+                <Stack.Screen name="(empleado)" />
+                <Stack.Screen name="security" />
+                <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+              </Stack>
+            )}
+            <StatusBar style="auto" />
           </CartProvider>
-          <StatusBar style="auto" />
         </ToastProvider>
       </ThemeProvider>
     </NavThemeProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  loader: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
+  },
+});

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Svg, { Rect, Text as SvgText, Line } from 'react-native-svg';
+import Svg, { Rect, Text as SvgText } from 'react-native-svg';
 
 interface HorizontalBarChartProps {
   data: {

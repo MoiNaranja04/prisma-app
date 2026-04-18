@@ -1,5 +1,4 @@
 import { Feather } from "@expo/vector-icons";
-import { useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -8,10 +7,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import type { ProductCategory } from "../../services/categories";
+import type { ProductCategory } from "../../lib/categories";
 import { C } from "../../constants/colors";
 import type { CartItemUI } from "../../context/CartContext";
-import type { Product } from "../../services/products";
+import type { Product } from "../../lib/products";
 import { FloatingModal } from "../ui/FloatingModal";
 import ThemedTextInput from "../ui/ThemedTextInput";
 

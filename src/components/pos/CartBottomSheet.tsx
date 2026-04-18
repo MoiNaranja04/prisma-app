@@ -17,8 +17,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { C } from "../../constants/colors";
-import type { Customer } from "../../services/customers";
-import type { Product } from "../../services/products";
+import type { Customer } from "../../lib/customers";
+import type { Product } from "../../lib/products";
 
 interface CartItemUI {
     productId: string;

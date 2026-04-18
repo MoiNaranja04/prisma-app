@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Svg, { Circle } from 'react-native-svg';
+import Svg, { Circle, Path } from 'react-native-svg';
 
 interface DonutChartProps {
   data: {
@@ -78,11 +78,9 @@ export function DonutChart({
             startAngle = endAngle;
             
             return (
-              <Circle
+              <Path
                 key={index}
-                cx={center}
-                cy={center}
-                r={radius}
+                d={pathData}
                 fill={item.color}
                 opacity={0.85}
               />

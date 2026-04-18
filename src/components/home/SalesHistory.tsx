@@ -11,8 +11,8 @@ import {
 } from "react-native";
 import { FloatingModal } from "../ui/FloatingModal";
 import { useTheme } from "../../context/ThemeContext";
-import type { Customer } from "../../services/customers";
-import type { SaleWithItems } from "../../services/sales";
+import type { Customer } from "../../lib/customers";
+import type { SaleWithItems } from "../../lib/sales";
 
 interface Props {
   role: "admin" | "employee";

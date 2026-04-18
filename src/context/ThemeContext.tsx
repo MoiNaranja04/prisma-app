@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -65,11 +72,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const systemColorScheme = useColorScheme();
   const [isDark, setIsDark] = useState(false);
 
-  useEffect(() => {
-    loadThemePreference();
-  }, []);
-
-  const loadThemePreference = async () => {
+  const loadThemePreference = useCallback(async () => {
     try {
       const savedTheme = await AsyncStorage.getItem('@theme');
       if (savedTheme !== null) {
@@ -80,7 +83,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error('Error loading theme:', error);
     }
-  };
+  }, [systemColorScheme]);
+
+  useEffect(() => {
+    void loadThemePreference();
+  }, [loadThemePreference]);
 
   const toggleTheme = async () => {
     const newValue = !isDark;

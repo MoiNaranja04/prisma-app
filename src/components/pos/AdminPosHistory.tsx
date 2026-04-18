@@ -11,22 +11,20 @@ import { C } from "../../constants/colors";
 import { useTheme } from "../../context/ThemeContext";
 import { useToast } from "../../context/ToastContext";
 import { useCompany } from "../../hooks/useCompany";
-import { Customer, getCustomersByCompany } from "../../services/customers";
-import { getProductsByCompany } from "../../services/products";
+import { Customer, getCustomersByCompany } from "../../lib/customers";
+import { getProductsByCompany } from "../../lib/products";
 import {
     SaleItem,
     SaleWithItems,
     cancelSale,
     getSalesWithItems,
-} from "../../services/sales";
-import { supabase } from "../../services/supabase";
+} from "../../lib/sales";
+import { supabase } from "../../lib/supabase";
 import {
-    Category,
     Transaction,
     TransactionType,
-    getCategoriesByCompany,
     getTransactionsByCompany,
-} from "../../services/transactions";
+} from "../../lib/transactions";
 import { DistributionChart } from "../ui/DistributionChart"; // Reusing distribution chart
 import { FloatingModal } from "../ui/FloatingModal";
 
@@ -98,7 +96,6 @@ export function AdminPosHistory() {
     const [sales, setSales] = useState<SaleWithItems[]>([]);
     const [customers, setCustomers] = useState<Customer[]>([]);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
-    const [categories, setCategories] = useState<Category[]>([]);
     const [loadingData, setLoadingData] = useState(false);
 
     const [cancellingId, setCancellingId] = useState<string | null>(null);
@@ -115,17 +112,15 @@ export function AdminPosHistory() {
     const loadData = useCallback(async (companyId: string) => {
         setLoadingData(true);
         try {
-            const [salesRes, custRes, txRes, catRes] = await Promise.allSettled([
+            const [salesRes, custRes, txRes] = await Promise.allSettled([
                 getSalesWithItems(companyId),
                 getCustomersByCompany(companyId),
                 getTransactionsByCompany(companyId),
-                getCategoriesByCompany(companyId),
             ]);
 
             if (salesRes.status === "fulfilled") setSales(salesRes.value);
             if (custRes.status === "fulfilled") setCustomers(custRes.value);
             if (txRes.status === "fulfilled") setTransactions(txRes.value);
-            if (catRes.status === "fulfilled") setCategories(catRes.value);
         } catch (e: any) {
             if (__DEV__) console.error("Error cargando historial:", e);
         } finally {

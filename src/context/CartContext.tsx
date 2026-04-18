@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useState } from "react";
-import type { Product } from "../services/products";
+import type { Product } from "../lib/products";
 import { haptic } from "../hooks/useHaptics";
 
 export interface CartItemUI {

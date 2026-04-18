@@ -18,6 +18,7 @@ import Animated, {
   Easing,
   interpolate,
   runOnJS,
+  type SharedValue,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -28,7 +29,7 @@ import ThemedTextInput from "../../components/ui/ThemedTextInput";
 import { useTheme } from "../../context/ThemeContext";
 import { useToast } from "../../context/ToastContext";
 import { haptic } from "../../hooks/useHaptics";
-import { supabase } from "../../services/supabase";
+import { supabase } from "../../lib/supabase";
 
 const SIDEBAR_RATIO = 1;
 const SPRING_CONFIG = { damping: 22, stiffness: 220, mass: 0.8 };
@@ -60,7 +61,7 @@ type ReportSnapshot = {
   companyName: string;
 };
 
-const REPORT_PERIODS: Array<{ key: ReportPeriodKey; label: string }> = [
+const REPORT_PERIODS: { key: ReportPeriodKey; label: string }[] = [
   { key: "today", label: "Hoy" },
   { key: "week", label: "Semana" },
   { key: "month", label: "Mes" },
@@ -169,6 +170,39 @@ const INLINE_VIEW_CONTENT: Record<
 };
 
 const APP_VERSION = Constants.expoConfig?.version ?? "1.0.0";
+
+type AnimatedMenuEntryProps = {
+  children: React.ReactNode;
+  index: number;
+  progress: SharedValue<number>;
+};
+
+function AnimatedMenuEntry({
+  children,
+  index,
+  progress,
+}: AnimatedMenuEntryProps) {
+  const style = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      progress.value,
+      [0.3 + index * 0.06, 0.5 + index * 0.06],
+      [0, 1],
+      "clamp",
+    ),
+    transform: [
+      {
+        translateX: interpolate(
+          progress.value,
+          [0.3 + index * 0.06, 0.5 + index * 0.06],
+          [-12, 0],
+          "clamp",
+        ),
+      },
+    ],
+  }));
+
+  return <Animated.View style={style}>{children}</Animated.View>;
+}
 
 interface AdminSidebarProps {
   visible: boolean;
@@ -345,29 +379,6 @@ export function AdminSidebar({
       { translateX: interpolate(progress.value, [0, 1], [-sidebarWidth, 0]) },
     ],
   }));
-
-  const createItemStyle = (index: number) =>
-    useAnimatedStyle(() => ({
-      opacity: interpolate(
-        progress.value,
-        [0.3 + index * 0.06, 0.5 + index * 0.06],
-        [0, 1],
-        "clamp",
-      ),
-      transform: [
-        {
-          translateX: interpolate(
-            progress.value,
-            [0.3 + index * 0.06, 0.5 + index * 0.06],
-            [-12, 0],
-            "clamp",
-          ),
-        },
-      ],
-    }));
-
-  const itemStyles = MENU_ITEMS.map((_, i) => createItemStyle(i));
-  const logoutStyle = createItemStyle(MENU_ITEMS.length);
 
   const handleItemPress = useCallback(
     (item: MenuItem) => {
@@ -1721,7 +1732,7 @@ export function AdminSidebar({
               : "rgba(0,0,0,0.04)";
 
             return (
-              <Animated.View key={item.key} style={itemStyles[index]}>
+              <AnimatedMenuEntry key={item.key} index={index} progress={progress}>
                 <Pressable
                   style={({ pressed }) => [
                     styles.menuItem,
@@ -1760,13 +1771,13 @@ export function AdminSidebar({
                     {item.label}
                   </Text>
                 </Pressable>
-              </Animated.View>
+              </AnimatedMenuEntry>
             );
           })}
         </View>
 
         {/* Logout — anclado al fondo */}
-        <Animated.View style={logoutStyle}>
+        <AnimatedMenuEntry index={MENU_ITEMS.length} progress={progress}>
           <Pressable
             style={({ pressed }) => [
               styles.menuItem,
@@ -1806,7 +1817,7 @@ export function AdminSidebar({
               Cerrar sesión
             </Text>
           </Pressable>
-        </Animated.View>
+        </AnimatedMenuEntry>
 
         {/* Footer */}
         <View style={styles.footer}>
